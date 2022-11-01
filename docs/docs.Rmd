@@ -1,0 +1,1020 @@
+---
+title: "BUA 455 - Week 10"
+subtitle: "Introduction To Geographic Data" 
+author: "Penelope Pooler Eisenbies"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    seal: false
+    css: xaringan-themer.css
+    nature:
+      slideNumberFormat: "%current%/%total%" 
+      highlightStyle: tomorrow-night-bright
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: true
+      keep_md: true
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.retina=2,
+  #out.width = "75%",
+  #out.height = "50%",
+  htmltools.preserve.raw = FALSE,      # needed for windows
+  scipen=100,                          # suppresses scientific notation
+  getSymbols.warning4.0 = FALSE,       # suppresses getSymbols warnings
+  cache = FALSE,
+  echo = TRUE,
+  hiline = TRUE,
+  message = FALSE, 
+  warning = FALSE
+)
+
+
+# install helper package (pacman)
+# pacman loads and installs other packages, if needed
+if (!require("pacman")) install.packages("pacman", repos = "http://lib.stat.cmu.edu/R/CRAN/")
+
+# install and load required packages
+# pacman should be first package in parentheses and then list others
+pacman::p_load(pacman,tidyverse, ggthemes, magrittr, knitr, lubridate, gridExtra, RColorBrewer, 
+               flexdashboard, maps, usdata, countrycode, mapproj, shadowtext, grid)
+
+# verify packages (comment out in finished documents)
+p_loaded()
+
+
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+
+palette <- c(
+  SU_Orange1        = "#F76900",
+  SU_Orange2        = "#FF8E00",
+  SU_Red_Orange     = "#FF431B",
+  SU_Blue1          = "#000E54",
+  SU_Blue2          = "#203299",
+  SU_Light_Blue     = "#2B72D7",
+  SU_White          = "#FFFFFF",
+  SU_Light_Gray     = "#ADB3B8",
+  SU_Medium_Gray    = "#707780",
+  SU_Black          = "#000000", 
+  
+  steel_blue        = "#4682B4",
+  corn_flower_blue  = "#6495ED",
+  deep_sky_blue     = "#00BFFF",
+  dark_magenta      = "#8B008B",
+  medium_orchid     = "#BA55D3",
+  lime_green        = "#32CD32",
+  light_sea_green   = "#20B2AA",
+  chartreuse        = "#7FFF00",
+  orange_red        = "#FF4500",
+  white_smoke       = "#F5F5F5",
+  dark_cyan         = "#008B8B",
+  light_steel_blue  = "#B0C4DE",
+  indigo            = "#4B0082",
+  ivory             = "#FFFFF0",
+  light_slate_grey  = "#778899",
+  linen             = "#FAF0E6",
+  steel_blue        = "#4682B4",
+  blue_violet       = "#8A2BE2",
+  dodger_blue       = "#1E90FF",
+  light_blue        = "#ADD8E6",
+  azure             = "#F0FFFF",
+  lavender          = "#E6E6FA")
+
+primary_color = "#4682B4"                # steel_blue
+secondary_color = "#778899"              # light_slate_grey
+white_color = "#FFFFF0"                  # ivory
+black_color = "#000080"                  # navy
+
+style_duo_accent(
+  primary_color = primary_color,
+  secondary_color = secondary_color,
+  white_color = white_color,
+  black_color = black_color,
+  text_color = black_color,
+  header_color = primary_color,
+  background_color = white_color,
+  code_inline_background_color = "#E6E6FA", # lavender
+  link_color = "#1E90FF",                   # dodger_blue
+  code_inline_color = "#4B0082",            # indigo
+  text_bold_color = "#8B008B",              # dark_magenta
+  header_font_google = google_font("Open Sans"),
+  text_font_google = google_font("Open Sans"),
+  code_font_google = google_font("Source Code Pro"),
+  colors = palette
+)
+
+
+```
+
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+```{r xaringan-tile-view, echo=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+```{r xaringan-fit-screen, echo=FALSE}
+xaringanExtra::use_fit_screen()
+```
+
+```{r xaringan-tachyons, echo=FALSE}
+xaringanExtra::use_tachyons()
+```
+
+```{r xaringan-animate-css, echo=FALSE}
+xaringanExtra::use_animate_css()
+```
+
+```{r xaringan-animate-all, echo=FALSE}
+#xaringanExtra::use_animate_all("slide_up")
+```
+
+background-image: url("docs_files/images/sloth_faded.png")
+background-size: cover
+
+class: bottom, right
+
+## BUA 455 - Week 10
+
+### "Introduction To Geographic Data" 
+
+<br>
+
+
+#### Penelope Pooler Eisenbies
+
+#### `r Sys.Date()`
+
+[Wikipedia Sloth Page](https://en.wikipedia.org/wiki/Sloth)
+
+---
+
+### Upcoming Dates
+
+- **Proposal were due on Monday, 10/31** 
+
+  - If your group missed this deadline, you may still turn it in for 50% credit.
+
+- Project presentations begin 5 weeks from today.
+
+- HW 5 - Part 1 is due Wednesday, 11/2, at midnight (Grace period ends Friday 4/8 at midnight)
+
+- HW 5 - Part 2 will be posted next week and due before Thanksgiving Break
+
+<br>
+
+- **Quiz 2 is on Thursday, 11/10**
+
+  - Mostly on Weeks 5 through 9, but material is cumulative 
+
+  - Mostly on HW Assignments 4 and 5, but material is cumulative
+  
+  - Data Mgmt. tasks will requires 2 or 3 steps and then you will answer questions 
+  
+---
+  
+### This Week and next Week
+  
+- Practice Questions for Quiz 2 will be posted Tomorrow (Wed. 11/2)
+  
+- Thu. 11/3: Skills/Concepts Review for Quiz 2
+
+  - Putting skills together for different goals
+  
+  - Come with questions or submit them in Engagement Questions
+  
+<br>
+  
+- Today - Intro to Managing and Plotting Geographic Data 
+
+  - Today's geographic maps will not be on Quiz 2.  
+  
+  - Mapping data is an effective data curation tool that may be useful in this class, other classes, your career.
+  
+<br>
+  
+- Tuesday, 11/8, we will review these skills and extend them to look at country data.
+
+- **If you want help with project data, please reach out to meor TAs**.
+
+---
+
+### In-class Exercise - Week 10
+
+.pull-left[
+
+**Purpose:**  
+
+- To gain some experience and understanding of map data available in R and elsewhere.
+
+- To experiment with mapping data
+
+- Students are encouraged to use domestic or international map data in their dashboards if appropriate.
+
+]
+
+.pull-right[
+
+![](docs_files/images/owl.png)
+
+]
+
+---
+
+### Plots by US County
+
+#### Data Preparation
+
+- The data for today's in-class exercise is part of R.  
+
+- These geographic data are useful if you have information by state or county and you want to show a [choropleth map](https://en.wikipedia.org/wiki/Choropleth_map) of your data.
+
+- R also has world information, e.g., countries, continents, etc.
+
+```{r us data prep}
+us_states <- map_data("state") |>                    # state polygons (not used today)
+  rename("state" = "region")
+us_counties <- map_data("county") |>                 # county polygons
+  rename("state" = "region", "county" = "subregion")
+# unique(us_counties$county[us_counties$state=="louisiana"])   # note issue Louisiana counties
+cnty2019_all <- county_2019
+# unique(cnty2019_all$county[cnty2019_all$state=="louisiana"]) # note issue Louisiana counties
+
+cnty2019_all <- cnty2019_all |> 
+  mutate(state = tolower(state),
+         county = tolower(name),
+         county = gsub(" county", "", county),
+         county = gsub(" parish", "", county),
+         county = gsub("\\.", "", county))            # \\ is required because . used in R coding
+
+cnty2019_all <- full_join(us_counties,cnty2019_all)  # geo data and demographic data
+
+```
+
+---
+
+### County Demographic Plots
+
+.panelset[
+.panel[.panel-name[**Data and Plot 1**]
+
+.pull-left[
+
+- Creating a new dataset not required, but helpful
+- Plot code could be converted into a function
+
+```{r demographic example - select data and plot 1 code}
+
+cnty_data1 <- cnty2019_all |> 
+  select(long:county, hs_grad, bachelors, 
+         household_has_computer, 
+         household_has_broadband) 
+cnty_hs_grad <- cnty_data1 |>
+  ggplot(aes(x=long, y=lat, 
+             group=group, fill=hs_grad)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", 
+         title="Percent with High School Degree") +
+    scale_fill_continuous(type = "viridis") 
+```
+
+
+]
+
+.pull-right[
+
+```{r demographic example - plot 1 shown, echo=F, fig.dim=c(7,6)}
+cnty_hs_grad +
+      theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+```
+
+]
+
+]
+
+.panel[.panel-name[**Plot 2**]
+
+.pull-left[
+
+```{r demographic example - plot 2 code}
+
+cnty_bachelors <- cnty_data1 |>
+  ggplot(aes(x=long, y=lat, 
+             group=group, 
+             fill=bachelors)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", title="Percent with Bachelor's Degree") +
+    scale_fill_continuous(type = "viridis")
+
+```
+
+
+]
+
+.pull-right[
+
+```{r demographic example - plot 2 shown, echo=F, fig.dim=c(7,6)}
+
+cnty_bachelors +
+      theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+
+```
+
+]
+
+]
+
+.panel[.panel-name[**Plot 3**]
+
+.pull-left[
+
+```{r demographic example - plot 3 code}
+
+cnty_computer <- cnty_data1 |>
+  ggplot(aes(x=long, y=lat, 
+             group=group, 
+             fill=household_has_computer)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", title="Percent of Households with A Computer")+
+    scale_fill_continuous(type = "viridis")
+
+```
+
+
+]
+
+.pull-right[
+
+```{r demographic example - plot 3 shown, echo=F, fig.dim=c(7,6)}
+
+cnty_computer +
+      theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+
+```
+
+]
+
+]
+
+.panel[.panel-name[**Plot 4**]
+
+.pull-left[
+
+```{r demographic example - plot 4 code}
+
+cnty_brdbd <- cnty_data1 |>
+  ggplot(aes(x=long, y=lat, 
+             group=group, 
+             fill=household_has_broadband)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", title="Percent of Households with BroadBand") +
+    scale_fill_continuous(type = "viridis")
+
+```
+
+
+]
+
+.pull-right[
+
+```{r demographic example - plot 4 shown, echo=F, fig.dim=c(7,6)}
+
+cnty_brdbd +
+      theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+
+```
+
+]
+
+]
+
+]
+
+---
+
+### Demographic Plot Grid - Order Matters - L to R by Rows
+```{r pct grid code only, eval=F}
+grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2)
+```
+
+```{r grid of all four demographic plots, fig.align='center', fig.dim=c(14,6), echo=F}
+
+grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2) 
+grid.rect(.5,.5,width=unit(.99,"npc"), height=unit(0.99,"npc"), gp=gpar(lwd=3, fill=NA, col="darkgrey"))
+```
+
+---
+
+### In-class Exercise - 2x2 Plot Grid - Steps 1 and 2
+
+**Steps to Follow**
+
+**`1.`** Examine the available variables in the **`cnty_2019_all`** dataset saved from R.
+  
+**`2.`** Create Individual Plots**.
+
+- Variable names in R dataset and definitions:
+
+   - **`household_has_smartphone`: Households with Smart Phones**  
+   - **`median_age`: Median Age**
+   - **`median_household_income`: Median Household Income**
+   - **`median_individual_income`: Median Individual Income**
+   
+#### Create Individual Plots
+
+You can copy provided plot code and modify it for these variables
+or you can try to create a function (not required today).
+
+```{r usmaps demographic maps exercise}
+
+# select data for plot (not required, but helpful)
+# cnty_data2 <- 
+
+# create four individual plots, one for each variable
+# use provided plot code and modify
+
+```
+   
+---
+
+### In-class Exercise - 2x2 Plot Grid - Steps 3 and 4
+  
+**`3.`** Create 2x2 plot of these four variables by US County as part of your class participation credit for this week.
+
+- **For full credit, plots must be in the order specified.**
+
+   - **Row 1:** should have smartphone variable and median age.
+   - **Row 2:** median household and individual income.
+
+#### Create Plot Grid using `grid.arrange`
+
+```{r  in-class exercise 2x2 plot grid}
+
+# for full credit grid of plots must be in order specified
+# border around all four plots not required
+```
+
+**`4.`** Export and submit plot grid
+
+Reminder of two ways to export plots:
+
+- Right click on plot, then save as...
+- Use this R code, but modify for your plot and filename (height and width can also be modified)
+
+```{r export code example, eval=F}
+png("filename_in_quotes.png", height=480, width=720)
+plotname
+dev.off()
+
+```
+
+---
+
+### Mapping Log Transformed Data
+
+.pull-left[
+
+- The previous examples above are all percent data.
+
+- No transformations are needed
+
+- In contrast, population data or financial data are often right-skewed and need to be ((log transformed.**
+
+- Recall from MAS 261, BUA 345 (and perhaps FIN classes):
+
+  - An effective transformation for right skewed data is the natural log (LN) transformation.
+  
+  -  The following demo shows how useful it is for mapping right skewed data.
+
+]
+
+.pull-right[
+
+![](docs_files/images/beaver.png)
+
+
+]
+
+
+  
+---
+
+### Plot of Skewed Data
+
+.pull-left[
+
+```{r untransformed pop map code}
+
+cnty_data3 <- cnty2019_all |> 
+  select(long:county, pop) |>
+  mutate(pop1k = pop/1000)
+       
+cnty_pop <- cnty_data3 |>
+    ggplot(aes(x=long, y=lat, group=group, fill=pop1k)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", title="Population by County",
+         subtitle="Unit is 1000 People") +
+    scale_fill_continuous(type = "viridis") +
+    theme(legend.position = "bottom",
+          legend.key.width = unit(1, "cm"))
+
+```
+
+]
+
+.pull-right[
+
+**If map looks like this, examine histogram of data.**
+
+```{r untransformed pop map shown, echo=F, fig.dim=c(7,6)}
+
+cnty_pop +
+      theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+
+```
+
+]
+
+---
+
+### Histogram Clarifies Data Skewness
+
+.pull-left[
+
+```{r untransformed pop hist code}
+hist_pop <- cnty_data3 |>
+  ggplot() +
+  geom_histogram(aes(x=pop1k),
+                 fill="lightblue", 
+                 col="darkblue") +
+  labs(x="Population", title="Histogram of US Population Data",
+       y = "Count",subtitle="Unit is 1000 People") +
+  theme_classic()
+```
+
+]
+
+.pull-right[
+
+**Histogram confirms highly right-skewed data.**
+
+```{r untransformed pop hist shown, fig.dim=c(7,6), echo=F}
+
+hist_pop +
+      theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+
+```
+]
+
+---
+
+### Solution - Skewed Variable shown using Natural Log Scale
+
+.pull-left[
+
+- Data are not transformed, but data axes and scale are
+- Options specified in `scale_fill_continuous`:
+
+  - `trans = "log"` 
+  - `breaks = c(...)` 
+  
+- break intervals determined by examining data
+  
+```{r log transformed map plot code}
+
+cnty_lpop <- cnty_data3 |>
+  ggplot(aes(x=long, y=lat, group=group, fill=pop1k)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", title="Population by County",
+         subtitle="Unit is 1000 People and Date are Log-transformed") +
+    scale_fill_continuous(type = "viridis",trans="log",
+                          breaks=c(1,10,100,1000,10000)) +
+    theme(legend.position = "bottom",
+          legend.key.width = unit(1, "cm"))
+
+```
+
+]
+
+.pull-right[
+
+**Transformed Data shown on log scale (see legend)**
+
+```{r log transformed map plot shown, echo=F, fig.dim=c(7,6)}
+
+cnty_lpop +
+      theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+
+```
+]
+
+---
+
+### Histogram of Log transformed Data
+
+.pull-left[
+
+- In a final dashboard, usually don't show histograms
+- Ideal for exploring the data.
+- Scatterplots and boxplots are also useful for data exploration.
+
+```{r log transformed pop hist code}
+
+hist_lpop <- cnty_data3 |>
+  ggplot() +
+  geom_histogram(aes(x=pop1k),fill="lightblue", col="darkblue") +
+  labs(x="Population", 
+       title="Histogram of Natural Log of US Population Data",
+       y = "Count",
+       subtitle="Unit is 1000 People and Data are Log-transformed") +
+  theme_classic() + 
+  scale_x_continuous(trans="log", breaks=c(1,10,100,1000,10000))
+
+```
+
+]
+
+.pull-right[
+
+**Histogram of Log-transformed Data**
+
+```{r log transformed pop hist shown, echo=F, fig.dim=c(7,6)}
+
+hist_lpop +
+      theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+
+```
+
+
+]
+
+---
+
+### Population Plot Grid
+
+```{r plot code for pop grid, eval=F}
+grid.arrange(cnty_pop, hist_pop,cnty_lpop, hist_lpop, ncol=2) 
+```
+
+```{r grid of all four population plots, fig.align='center', fig.dim=c(14,6), echo=F}
+grid.arrange(cnty_pop, hist_pop,cnty_lpop, hist_lpop, ncol=2) 
+grid.rect(.5,.5,width=unit(.99,"npc"), height=unit(0.99,"npc"), gp=gpar(lwd=3, fill=NA, col="darkgrey"))
+```
+
+
+---
+
+### When and How to Log Transform
+
+- Log transformation are useful if you have right skewed POSITIVE data such as
+
+  - Prices
+  - Population
+  - Sales
+  - Income
+  
+- Note: If data (x) have zeros, a good option is to use log(x + 1) 
+
+  - ln(1) = 0 (In R `log(1)` = 0)
+  
+  - 0 values in the data will still be zeros
+  
+<br>
+  
+- In the following example we will create plots for number of households by county:
+
+  - Histograms with and without LN transformation 
+    
+  - Map plots of with and without LN transformation 
+  
+---
+
+### Number of Households Per County
+
+.pull-left[
+
+#### Untransformed Data Histogram
+
+```{r data and untransformed hh data histogram code}
+
+cnty_data4 <- cnty2019_all |> 
+  select(long:county, households) |>
+  mutate(households1K = households/1000)
+
+hist_hholds <- cnty_data4 |>
+  ggplot() +
+  geom_histogram(aes(x=households1K),
+                 fill="lightblue", 
+                 col="darkblue") +
+  labs(x="Number of Households", title="Histogram of US Household Data",
+       y = "Count",subtitle="Unit is 1000 Households") +
+  theme_classic()
+
+```
+
+]
+
+.pull-right[
+
+**Number of Households is highly right-skewed.**
+
+```{r untransformed hh data histogram shown, echo=F, fig.dim=c(7,6)}
+
+hist_hholds +
+      theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+
+```
+
+]
+
+---
+
+### Number of Households Per County
+
+.pull-left[
+
+#### Log transformed Data Histogram
+
+```{r log transformed hh data histogram code}
+
+hist_lhholds <- cnty_data4 |>
+  ggplot() +
+  geom_histogram(aes(x=households1K),
+                 fill="lightblue", 
+                 col="darkblue") +
+  labs(x="Number of Households", 
+       title="Histogram of Natural Log of US Household Data",
+       y = "Count",
+       subtitle="Unit is 1000 Households and Data are Log-transformed") +
+  theme_classic() + 
+  scale_x_continuous(trans="log", breaks=c(1,10,100,1000))
+
+```
+
+]
+
+.pull-right[
+
+**Log-transformed data appear normally distributed**
+
+```{r log transformed hh data histogram shown, echo=F, fig.dim=c(7,6)}
+
+hist_lhholds +
+      theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+
+```
+
+]
+
+---
+
+### Number of Households Per County
+
+.pull-left[
+
+```{r untransformed hh plot map code}
+
+cnty_hholds <- cnty_data4 |>
+  ggplot(aes(x=long, y=lat, group=group, fill=households1K)) +
+  geom_polygon() +
+  theme_map() +
+  coord_map("albers", lat0 = 39, lat1 = 45) +
+  labs(fill= "", title="Number of Households by County",
+       subtitle="Unit is 1000 Households") +
+  scale_fill_continuous(type = "viridis") +
+  theme(legend.position = "bottom",
+        legend.key.width = unit(1, "cm"))
+
+```
+
+]
+
+.pull-right[
+
+**Map of untranformed households per county data is uninformative.**
+
+```{r untransformed data hh map shown, echo=F, fig.dim=c(7,6)}
+
+cnty_hholds +
+      theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+
+```
+
+]
+
+---
+
+**Log-transformed data map is more more informative about geographic variability.**
+
+```{r log transformed hh data map, echo=F, fig.align='center', fig.dim=c(14,8)}
+
+cnty_lhholds <- cnty_data4 |>
+   ggplot(aes(x=long, y=lat, group=group, fill=households1K)) +
+   geom_polygon() +
+   theme_map() +
+   coord_map("albers", lat0 = 39, lat1 = 45) +
+   labs(fill= "", title="Number of Households by County",
+        subtitle="Unit is 1000 Households and data are Log-transformed") +
+   scale_fill_continuous(type = "viridis",
+                         trans="log", breaks=c(1,10,100,1000)) +
+   theme(legend.position = "bottom",
+         legend.key.width = unit(1, "cm"))
+
+cnty_lhholds + theme(plot.background = element_rect(colour = "darkgrey", fill=NA, size=2))
+
+```
+
+---
+
+### Households per County Plot Grid
+
+```{r household grid plot code, eval=F}
+grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, cnty_lhholds, ncol=2)
+```
+
+     
+```{r grid of all four household plots, echo = F, fig.align='center', fig.dim=c(14,6)}
+grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, cnty_lhholds, ncol=2)
+grid.rect(.5,.5,width=unit(.99,"npc"), height=unit(0.99,"npc"), gp=gpar(lwd=3, fill=NA, col="darkgrey"))
+
+```
+
+---
+
+### Quiz 2 Info 
+
+- Questions and Material from Quiz 1 may be on Quiz 2
+
+- Practice Questions will be posted by tomorrow night (Wed. 11/2)
+
+  - Review Quiz 1 and Quiz 1 Practice Questions
+  
+  - Review Week HW 4 and HW 5 - Part 1 and recent lectures 
+  
+- Converting text (character) date information to a date using [lubridate](https://rawgit.com/rstudio/cheatsheets/main/lubridate.pdf) commands (Week 5)
+
+  - Example R commands:`ymd`, `dmy`, `mdy`, `ym` combined with `paste` to combine columns
+  
+- Extracting year, month, or day from the date variable using lubridate commands (Week 6)
+
+  - Example R commands: `year`, `month`, `quarter`, `wday`, `day`
+
+- Converting an `xts` dataset to a tibble (standard R dataset) (Week 7)
+
+  - Creating a lineplot from time series (non-xts) dataset
+
+- Converting a tibble to an `xts` dataset
+
+   + Creating an interactive hchart
+   
+---
+
+### Quiz 2 Info Continued
+   
+- You should be familiar with the `bls_tidy` function we created and how to use it to import similar datasets.
+
+- There will be datasets to be imported AND combined (joined)
+
+  - Data sets can be joined by row.
+  
+  - You should know how to do the different joins we covered and what each one does:
+  
+    - `full_join`
+    
+    - `right_join`
+    
+    - `left_join`
+    
+    - `inner_join`
+    
+- Data sets can be stacked by column if the columns are identical
+  
+    - In BUA 455 we covered `bind_rows`
+    
+---
+
+### Quiz 2 Info Continued
+  
+- Cleaning messy data (Week 5 and Weeks 8-9)
+
+  - Dealing with text (character variables)
+  
+    - `gsub`
+    
+    - `separate`
+    
+    - `unite` or `paste` or `paste0`
+    
+    - `ifelse` can be be used for text OR for numeric data
+    
+    - `ifelse` followed by `factor` allows you to make any categorical variable you want.
+    
+- Other commands for modifying text:
+ 
+   - `tolower` and `toupper`
+   
+   - `str_trim`, `str_squish` and `str_pad`
+   
+   - `gsub`
+   
+   - `ifelse`
+   
+   
+---
+
+### Additional Text Commands (Not on Quiz 2)
+
+   - New commands (not for quiz): Capitalize 1st letter
+   
+   - [Commands to covert case](https://stringr.tidyverse.org/reference/case.html)
+   
+   - `str_to_title`: First letter of each word
+     
+   - `str_to_sentence`: First letter of first word
+   
+### Additional skills for Quiz 2 from HW 5 - Part 1
+
+  - summing across rows using `sum(c_across(...))`
+  
+  - using `pivot_wider` and then `pivot_longer` and then replacing NAs with 0 to create a 'complete' data set
+  
+    - Useful for area plots
+    
+- Plotting skills for Quiz 2
+
+   - line plot or area plot
+   
+   - hchart
+   
+   - possibly a grouped bar chart
+   
+---
+
+background-image: url("docs_files/images/tired_panda_faded.png")
+background-size: cover
+
+.pull-left[
+
+### **Key Points from Week 10**
+
+.bg-azure.b--dark_cyan.ba.bw2.br3.shadow-5.ph2[
+
+**Introduction to Geographic Data**
+
+- Use skills already covered to
+
+  - clean data and check text variables
+  
+  - join datasets
+  
+  - create plot grids for comparing variables 
+
+- Determine if variables need to be log-transformed
+
+- Quiz 2 Practice Questions will be Posted by 11/2
+
+]
+
+]
+
+.pull-right[
+
+
+.bg-azure.b--dark_cyan.ba.bw2.br3.shadow-5.ph3[
+**You may submit an 'Engagement Question or Comment' about Week 10 lectures until Thursday, 11/3, at midnight on Blackboard.**
+]
+
+
+]
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
