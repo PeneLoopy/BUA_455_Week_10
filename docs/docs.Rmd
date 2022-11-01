@@ -810,7 +810,7 @@ cnty_hholds <- cnty_data4 |>
 
 .pull-right[
 
-**Map of untranformed households per county data is uninformative.**
+**Map of untransformed households per county data is uninformative.**
 
 ```{r untransformed data hh map shown, echo=F, fig.dim=c(7,6)}
 
@@ -825,7 +825,9 @@ cnty_hholds +
 
 **Log-transformed data map is more more informative about geographic variability.**
 
-```{r log transformed hh data map, echo=F, fig.align='center', fig.dim=c(14,8)}
+**In-class Exercise 2: Submit R code to create log transformed households map in a text file with your name.**
+
+```{r log transformed hh data map, echo=F, fig.align='center', fig.dim=c(14,7)}
 
 cnty_lhholds <- cnty_data4 |>
    ggplot(aes(x=long, y=lat, group=group, fill=households1K)) +
