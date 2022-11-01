@@ -10,26 +10,634 @@ output:
     toc_float: yes
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=TRUE}
+
+# this line specifies options for default options for all R Chunks
+knitr::opts_chunk$set(echo=T, 
+                      highlight=T)
+
+# suppress scientific notation
+options(scipen=100,
+        getSymbols.warning4.0 = FALSE)
+
+# install helper package (pacman), if needed
+if (!require("pacman")) install.packages("pacman", repos = "http://lib.stat.cmu.edu/R/CRAN/")
+
+# install and load required packages
+# pacman should be first package in parentheses and then list others
+pacman::p_load(pacman,tidyverse, ggthemes, magrittr, knitr, lubridate, gridExtra, RColorBrewer, 
+               flexdashboard, maps, usdata, countrycode, mapproj, shadowtext, grid)
+
+# verify packages (comment out in finished documents)
+p_loaded()
+
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+---
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+### Upcoming Dates
 
-```{r cars}
-summary(cars)
+- **Proposal were due on Monday, 10/31** 
+
+  - If your group missed this deadline, you may still turn it in for 50% credit.
+
+- Project presentations begin 5 weeks from today.
+
+- HW 5 - Part 1 is due Wednesday, 11/2, at midnight (Grace period ends Friday 4/8 at midnight)
+
+- HW 5 - Part 2 will be posted next week and due before Thanksgiving Break
+
+<br>
+
+- **Quiz 2 is on Thursday, 11/10**
+
+  - Mostly on Weeks 5 through 9, but material is cumulative 
+
+  - Mostly on HW Assignments 4 and 5, but material is cumulative
+  
+  - Data Mgmt. tasks will requires 2 or 3 steps and then you will answer questions 
+  
+---
+  
+### This Week and next Week
+  
+- Practice Questions for Quiz 2 will be posted Tomorrow (Wed. 11/2)
+  
+- Thu. 11/3: Skills/Concepts Review for Quiz 2
+
+  - Putting skills together for different goals
+  
+  - Come with questions or submit them in Engagement Questions
+  
+<br>
+  
+- Today - Intro to Managing and Plotting Geographic Data 
+
+  - Today's geographic maps will not be on Quiz 2.  
+  
+  - Mapping data is an effective data curation tool that may be useful in this class, other classes, your career.
+  
+<br>
+  
+- Tuesday, 11/8, we will review these skills and extend them to look at country data.
+
+- **If you want help with project data, please reach out to meor TAs**.
+
+---
+
+### In-class Exercise 1 - Week 10
+
+**Purpose:**  
+
+- To gain some experience and understanding of map data available in R and elsewhere.
+
+- To experiment with mapping data
+
+- Students are encouraged to use domestic or international map data in their dashboards if appropriate.
+
+---
+
+### Plots by US County
+
+#### Data Preparation
+
+- The data for today's in-class exercise is part of R.  
+
+- These geographic data are useful if you have information by state or county and you want to show a [choropleth map](https://en.wikipedia.org/wiki/Choropleth_map) of your data.
+
+- R also has world information, e.g., countries, continents, etc.
+
+```{r us data prep}
+us_states <- map_data("state") |>                    # state polygons (not used today)
+  rename("state" = "region")
+
+us_counties <- map_data("county") |>                 # county polygons
+  rename("state" = "region", "county" = "subregion")
+# unique(us_counties$county[us_counties$state=="louisiana"])   # note issue Louisiana counties
+
+cnty2019_all <- county_2019
+# unique(cnty2019_all$county[cnty2019_all$state=="louisiana"]) # note issue Louisiana counties
+
+cnty2019_all <- cnty2019_all |> 
+  mutate(state = tolower(state),
+         county = tolower(name),
+         county = gsub(" county", "", county),
+         county = gsub(" parish", "", county),
+         county = gsub("\\.", "", county))            # \\ is required because . used in R coding
+
+cnty2019_all <- full_join(us_counties,cnty2019_all)  # geo data and demographic data
+
 ```
 
-## Including Plots
+---
 
-You can also embed plots, for example:
+### County Demographic Plots
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+- Creating a new dataset not required, but helpful
+- Plot code could be converted into a function
+
+```{r demographic example - select data and plots 1 thru 4}
+
+# select data
+cnty_data1 <- cnty2019_all |> 
+  select(long:county, hs_grad, bachelors, 
+         household_has_computer, 
+         household_has_broadband) 
+
+
+# hs grad pct plot
+(cnty_hs_grad <- cnty_data1 |>
+  ggplot(aes(x=long, y=lat, 
+             group=group, fill=hs_grad)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", 
+         title="Percent with High School Degree") +
+    scale_fill_continuous(type = "viridis"))
+
+
+# bachelors pct plot
+(cnty_bachelors <- cnty_data1 |>
+  ggplot(aes(x=long, y=lat, 
+             group=group, 
+             fill=bachelors)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", title="Percent with Bachelor's Degree") +
+    scale_fill_continuous(type = "viridis"))
+
+
+# hh has computer pct plot
+(cnty_computer <- cnty_data1 |>
+  ggplot(aes(x=long, y=lat, 
+             group=group, 
+             fill=household_has_computer)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", title="Percent of Households with A Computer")+
+    scale_fill_continuous(type = "viridis"))
+
+
+# hh has broadband pct plot
+(cnty_brdbd <- cnty_data1 |>
+  ggplot(aes(x=long, y=lat, 
+             group=group, 
+             fill=household_has_broadband)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", title="Percent of Households with BroadBand") +
+    scale_fill_continuous(type = "viridis"))
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+---
+
+### Demographic Plot Grid - Order Matters - L to R by Rows
+
+```{r grid of all four demographic plots, fig.align='center', fig.dim=c(14,6), echo=F}
+
+grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2) 
+
+```
+
+---
+
+### In-class Exercise 1 - 2x2 Plot Grid - Steps 1 and 2
+
+**Steps to Follow**
+
+**`1.`** Examine the available variables in the **`cnty_2019_all`** dataset saved from R.
+  
+**`2.`** Create Individual Plots**.
+
+- Variable names in R dataset and definitions:
+
+   - **`household_has_smartphone`: Households with Smart Phones**  
+   - **`median_age`: Median Age**
+   - **`median_household_income`: Median Household Income**
+   - **`median_individual_income`: Median Individual Income**
+   
+#### Create Individual Plots
+
+You can copy provided plot code and modify it for these variables
+or you can try to create a function (not required today).
+
+```{r usmaps demographic maps exercise}
+
+# select data for plot (not required, but helpful)
+# cnty_data2 <- 
+
+# create four individual plots, one for each variable
+# use provided plot code and modify
+
+```
+   
+---
+
+### In-class Exercise 1 - 2x2 Plot Grid - Steps 3 and 4
+  
+**`3.`** Create 2x2 plot of these four variables by US County as part of your class participation credit for this week.
+
+- **For full credit, plots must be in the order specified.**
+
+   - **Row 1:** should have smartphone variable and median age.
+   - **Row 2:** median household and individual income.
+
+#### Create Plot Grid using `grid.arrange`
+
+```{r  in-class exercise 2x2 plot grid}
+
+# for full credit grid of plots must be in order specified
+# border around all four plots not required
+```
+
+**`4.`** Export and submit plot grid
+
+Reminder of two ways to export plots:
+
+- Right click on plot, then save as...
+- Use this R code, but modify for your plot and filename (height and width can also be modified)
+
+```{r export code example, eval=F}
+png("filename_in_quotes.png", height=480, width=720)
+plotname
+dev.off()
+
+```
+
+---
+
+### Mapping Log Transformed Data
+
+- The previous examples above are all percent data.
+
+- No transformations are needed
+
+- In contrast, population data or financial data are often right-skewed and need to be ((log transformed.**
+
+- Recall from MAS 261, BUA 345 (and perhaps FIN classes):
+
+  - An effective transformation for right skewed data is the natural log (LN) transformation.
+  
+  -  The following demo shows how useful it is for mapping right skewed data.
+
+
+---
+
+### Plot of Skewed Data
+
+**If map looks like this, examine histogram of data.**
+
+```{r untransformed pop map code}
+
+cnty_data3 <- cnty2019_all |> 
+  select(long:county, pop) |>
+  mutate(pop1k = pop/1000)
+       
+(cnty_pop <- cnty_data3 |>
+    ggplot(aes(x=long, y=lat, group=group, fill=pop1k)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", title="Population by County",
+         subtitle="Unit is 1000 People") +
+    scale_fill_continuous(type = "viridis") +
+    theme(legend.position = "bottom",
+          legend.key.width = unit(1, "cm")))
+
+```
+
+
+---
+
+### Histogram Clarifies Data Skewness
+
+**Histogram confirms highly right-skewed data.**
+
+```{r untransformed pop hist code}
+(hist_pop <- cnty_data3 |>
+  ggplot() +
+  geom_histogram(aes(x=pop1k),
+                 fill="lightblue", 
+                 col="darkblue") +
+  labs(x="Population", title="Histogram of US Population Data",
+       y = "Count",subtitle="Unit is 1000 People") +
+  theme_classic())
+```
+
+---
+
+### Solution - Skewed Variable shown using Natural Log Scale
+
+- Data are not transformed, but data axes and scale are
+- Options specified in `scale_fill_continuous`:
+
+  - `trans = "log"` 
+  - `breaks = c(...)` 
+  
+- break intervals determined by examining data
+
+<br>
+
+**Transformed Data shown on log scale (see legend)**
+  
+```{r log transformed map plot code}
+
+(cnty_lpop <- cnty_data3 |>
+  ggplot(aes(x=long, y=lat, group=group, fill=pop1k)) +
+    geom_polygon() +
+    theme_map() +
+    coord_map("albers", lat0 = 39, lat1 = 45) +
+    labs(fill= "", title="Population by County",
+         subtitle="Unit is 1000 People and Date are Log-transformed") +
+    scale_fill_continuous(type = "viridis",trans="log",
+                          breaks=c(1,10,100,1000,10000)) +
+    theme(legend.position = "bottom",
+          legend.key.width = unit(1, "cm")))
+
+```
+
+
+---
+
+### Histogram of Log transformed Data
+
+- In a final dashboard, usually don't show histograms
+- Ideal for exploring the data.
+- Scatterplots and boxplots are also useful for data exploration.
+
+```{r log transformed pop hist code}
+
+(hist_lpop <- cnty_data3 |>
+  ggplot() +
+  geom_histogram(aes(x=pop1k),fill="lightblue", col="darkblue") +
+  labs(x="Population", 
+       title="Histogram of Natural Log of US Population Data",
+       y = "Count",
+       subtitle="Unit is 1000 People and Data are Log-transformed") +
+  theme_classic() + 
+  scale_x_continuous(trans="log", breaks=c(1,10,100,1000,10000)))
+
+```
+
+
+---
+
+### Population Plot Grid
+
+```{r grid of all four population plots}
+grid.arrange(cnty_pop, hist_pop, cnty_lpop, hist_lpop, ncol=2) 
+
+```
+
+
+---
+
+### When and How to Log Transform
+
+- Log transformation are useful if you have right skewed POSITIVE data such as
+
+  - Prices
+  - Population
+  - Sales
+  - Income
+  
+- Note: If data (x) have zeros, a good option is to use log(x + 1) 
+
+  - ln(1) = 0 (In R `log(1)` = 0)
+  
+  - 0 values in the data will still be zeros
+  
+<br>
+  
+- In the following example we will create plots for number of households by county:
+
+  - Histograms with and without LN transformation 
+    
+  - Map plots of with and without LN transformation 
+  
+---
+
+### Number of Households Per County
+
+#### Untransformed Data Histogram
+
+```{r data and untransformed hh data histogram code}
+
+cnty_data4 <- cnty2019_all |> 
+  select(long:county, households) |>
+  mutate(households1K = households/1000)
+
+(hist_hholds <- cnty_data4 |>
+  ggplot() +
+  geom_histogram(aes(x=households1K),
+                 fill="lightblue", 
+                 col="darkblue") +
+  labs(x="Number of Households", title="Histogram of US Household Data",
+       y = "Count",subtitle="Unit is 1000 Households") +
+  theme_classic())
+
+```
+
+---
+
+### Number of Households Per County
+
+#### Log transformed Data Histogram
+
+```{r log transformed hh data histogram code}
+
+(hist_lhholds <- cnty_data4 |>
+  ggplot() +
+  geom_histogram(aes(x=households1K),
+                 fill="lightblue", 
+                 col="darkblue") +
+  labs(x="Number of Households", 
+       title="Histogram of Natural Log of US Household Data",
+       y = "Count",
+       subtitle="Unit is 1000 Households and Data are Log-transformed") +
+  theme_classic() + 
+  scale_x_continuous(trans="log", breaks=c(1,10,100,1000)))
+
+```
+
+
+---
+
+### Number of Households Per County
+
+```{r untransformed hh plot map code}
+
+(cnty_hholds <- cnty_data4 |>
+  ggplot(aes(x=long, y=lat, group=group, fill=households1K)) +
+  geom_polygon() +
+  theme_map() +
+  coord_map("albers", lat0 = 39, lat1 = 45) +
+  labs(fill= "", title="Number of Households by County",
+       subtitle="Unit is 1000 Households") +
+  scale_fill_continuous(type = "viridis") +
+  theme(legend.position = "bottom",
+        legend.key.width = unit(1, "cm")))
+
+```
+
+
+
+---
+
+**Log-transformed data map is more more informative about geographic variability.**
+
+#### In-class Exercise 2: Submit R code to create log transformed households map in a text file with your name.**
+
+```{r log transformed hh data map}
+
+# cnty_lhholds <- cnty_data4 |>
+
+
+```
+
+---
+
+### Households per County Plot Grid
+
+```{r grid of all four household plots}
+
+grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, ncol=2)
+
+```
+
+---
+
+### Quiz 2 Info 
+
+- Questions and Material from Quiz 1 may be on Quiz 2
+
+- Practice Questions will be posted by tomorrow night (Wed. 11/2)
+
+  - Review Quiz 1 and Quiz 1 Practice Questions
+  
+  - Review Week HW 4 and HW 5 - Part 1 and recent lectures 
+  
+- Converting text (character) date information to a date using [lubridate](https://rawgit.com/rstudio/cheatsheets/main/lubridate.pdf) commands (Week 5)
+
+  - Example R commands:`ymd`, `dmy`, `mdy`, `ym` combined with `paste` to combine columns
+  
+- Extracting year, month, or day from the date variable using lubridate commands (Week 6)
+
+  - Example R commands: `year`, `month`, `quarter`, `wday`, `day`
+
+- Converting an `xts` dataset to a tibble (standard R dataset) (Week 7)
+
+  - Creating a lineplot from time series (non-xts) dataset
+
+- Converting a tibble to an `xts` dataset
+
+   + Creating an interactive hchart
+   
+<br>
+   
+- You should be familiar with the `bls_tidy` function we created and how to use it to import similar datasets.
+
+- There will be datasets to be imported AND combined (joined)
+
+  - Data sets can be joined by row.
+  
+  - You should know how to do the different joins we covered and what each one does:
+  
+    - `full_join`
+    
+    - `right_join`
+    
+    - `left_join`
+    
+    - `inner_join`
+    
+- Data sets can be stacked by column if the columns are identical
+  
+    - In BUA 455 we covered `bind_rows`
+    
+<br>
+
+- Cleaning messy data (Week 5 and Weeks 8-9)
+
+  - Dealing with text (character variables)
+  
+    - `gsub`
+    
+    - `separate`
+    
+    - `unite` or `paste` or `paste0`
+    
+    - `ifelse` can be be used for text OR for numeric data
+    
+    - `ifelse` followed by `factor` allows you to make any categorical variable you want.
+    
+- Other commands for modifying text:
+ 
+   - `tolower` and `toupper`
+   
+   - `str_trim`, `str_squish` and `str_pad`
+   
+   - `gsub`
+   
+   - `ifelse`
+   
+   
+---
+
+### Additional Text Commands (Not on Quiz 2)
+
+   - New commands (not for quiz): Capitalize 1st letter
+   
+   - [Commands to covert case](https://stringr.tidyverse.org/reference/case.html)
+   
+   - `str_to_title`: First letter of each word
+     
+   - `str_to_sentence`: First letter of first word
+   
+### Additional skills for Quiz 2 from HW 5 - Part 1
+
+  - summing across rows using `sum(c_across(...))`
+  
+  - using `pivot_wider` and then `pivot_longer` and then replacing NAs with 0 to create a 'complete' data set
+  
+    - Useful for area plots
+    
+- Plotting skills for Quiz 2
+
+   - line plot or area plot
+   
+   - hchart
+   
+   - possibly a grouped bar chart
+   
+---
+
+
+### **Key Points from Week 10**
+
+**Introduction to Geographic Data**
+
+- Use skills already covered to
+
+  - clean data and check text variables
+  
+  - join datasets
+  
+  - create plot grids for comparing variables 
+
+- Determine if variables need to be log-transformed
+
+- Quiz 2 Practice Questions will be Posted by 11/2
+
+
+**You may submit an 'Engagement Question or Comment' about Week 10 lectures until Thursday, 11/3, at midnight on Blackboard.**
+
