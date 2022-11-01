@@ -827,7 +827,7 @@ cnty_hholds +
 
 **In-class Exercise 2: Submit R code to create log transformed households map in a text file with your name.**
 
-```{r log transformed hh data map, echo=F, fig.align='center', fig.dim=c(14,7)}
+```{r log transformed hh data map, echo=F, fig.align='center', fig.dim=c(14,6.5)}
 
 cnty_lhholds <- cnty_data4 |>
    ggplot(aes(x=long, y=lat, group=group, fill=households1K)) +
