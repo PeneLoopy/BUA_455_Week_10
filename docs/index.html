@@ -4,7 +4,7 @@
     <title>BUA 455 - Week 10</title>
     <meta charset="utf-8" />
     <meta name="author" content="Penelope Pooler Eisenbies" />
-    <meta name="date" content="2022-10-31" />
+    <meta name="date" content="2022-11-02" />
     <script src="docs_files/header-attrs/header-attrs.js"></script>
     <link href="docs_files/panelset/panelset.css" rel="stylesheet" />
     <script src="docs_files/panelset/panelset.js"></script>
@@ -42,14 +42,14 @@ class: bottom, right
 
 ## BUA 455 - Week 10
 
-### "Introduction To Geographic Data" 
+### Introduction To Geographic Data and Quiz 2 Review
 
 &lt;br&gt;
 
 
 #### Penelope Pooler Eisenbies
 
-#### 2022-10-31
+#### 2022-11-02
 
 [Wikipedia Sloth Page](https://en.wikipedia.org/wiki/Sloth)
 
@@ -101,7 +101,7 @@ class: bottom, right
   
 - Tuesday, 11/8, we will review these skills and extend them to look at country data.
 
-- **If you want help with project data, please reach out to meor TAs**.
+- **If you want help with project data, please reach out to me or TAs**.
 
 ---
 
@@ -145,7 +145,7 @@ us_counties &lt;- map_data("county") |&gt;                 # county polygons
   rename("state" = "region", "county" = "subregion")
 # unique(us_counties$county[us_counties$state=="louisiana"])   # note issue Louisiana counties
 cnty2019_all &lt;- county_2019
-# unique(cnty2019_all$county[cnty2019_all$state=="louisiana"]) # note issue Louisiana counties
+# unique(cnty2019_all$name[cnty2019_all$state=="Louisiana"]) # note issue Louisiana counties
 
 cnty2019_all &lt;- cnty2019_all |&gt; 
   mutate(state = tolower(state),
@@ -348,12 +348,12 @@ or you can try to create a function (not required today).
 Reminder of two ways to export plots:
 
 - Right click on plot, then save as...
-- Use this R code, but modify for your plot and filename (height and width can also be modified)
-
+- Use R code below but modify for your filename (height and width can also be modified)
+  - Use your completed `grid.arrange` command from your plots
 
 ```r
-png("filename_in_quotes.png", height=480, width=720)
-plotname
+png("Wk2_Example_Plot_Grid_Penelope_Pooler.png", height=480, width=720)
+grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2)
 dev.off()
 ```
 

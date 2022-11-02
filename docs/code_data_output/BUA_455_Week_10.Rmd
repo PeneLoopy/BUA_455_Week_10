@@ -82,7 +82,7 @@ p_loaded()
   
 - Tuesday, 11/8, we will review these skills and extend them to look at country data.
 
-- **If you want help with project data, please reach out to meor TAs**.
+- **If you want help with project data, please reach out to me or TAs**.
 
 ---
 
@@ -267,8 +267,9 @@ Reminder of two ways to export plots:
 - Use this R code, but modify for your plot and filename (height and width can also be modified)
 
 ```{r export code example, eval=F}
-png("filename_in_quotes.png", height=480, width=720)
-plotname
+
+png("Wk2_Example_Plot_Grid_Penelope_Pooler.png", height=480, width=720)
+grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2)
 dev.off()
 
 ```
