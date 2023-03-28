@@ -158,19 +158,19 @@ class: bottom, right
 
 ### Upcoming Dates
 
-- **Proposal were due on Monday, 10/31** 
+- **Proposal were due on Monday, 3/27** 
 
-  - If your group missed this deadline, you may still turn it in for 50% credit.
+  - There is a 24 hours grace period for final proposals.
 
-- Project presentations begin 5 weeks from today.
+- Project presentations begin 4 weeks from today.
 
-- HW 5 - Part 1 is due Wednesday, 11/2, at midnight (Grace period ends Friday 4/8 at midnight)
+- HW 5 - Part 1 is due Friday, 3/31, at midnight (Grace period ends Monday, 4/3 at midnight).
 
-- HW 5 - Part 2 will be posted next week and due before Thanksgiving Break
+- HW 5 - Part 2 will be posted next weekend (after Quiz 2) and due on Wednesday 4/19
 
 <br>
 
-- **Quiz 2 is on Thursday, 11/10**
+- **Quiz 2 is on Tuesday, 4/4 - No class on Thursday, 4/6** 
 
   - Mostly on Weeks 5 through 9, but material is cumulative 
 
@@ -180,11 +180,11 @@ class: bottom, right
   
 ---
   
-### This Week and next Week
+### This Week
   
-- Practice Questions for Quiz 2 will be posted Tomorrow (Wed. 11/2)
+- Practice Questions and Demo Videos for Quiz 2 are available.
   
-- Thu. 11/3: Skills/Concepts Review for Quiz 2
+- Thu. 3/30: Skills/Concepts Review for Quiz 2
 
   - Putting skills together for different goals
   
@@ -200,8 +200,8 @@ class: bottom, right
   
 <br>
   
-- Tuesday, 11/8, we will review these skills and extend them to look at country data.
-
+ - We will cover more about geographic data and map visualizations after Quiz 2.
+ 
 - **If you want help with project data, please reach out to me or TAs**.
 
 ---
@@ -991,9 +991,11 @@ background-size: cover
   
   - create plot grids for comparing variables 
 
-- Determine if variables need to be log-transformed
+- Determine if variables need to be log-transformed.
 
-- Quiz 2 Practice Questions will be Posted by 11/2
+- Quiz 2 Practice Questions are available.
+
+- Quiz 2 will be on Tue. 4/4 and there is no class on 4/6.
 
 ]
 
@@ -1003,7 +1005,7 @@ background-size: cover
 
 
 .bg-azure.b--dark_cyan.ba.bw2.br3.shadow-5.ph3[
-**You may submit an 'Engagement Question or Comment' about Week 10 lectures until Thursday, 11/3, at midnight on Blackboard.**
+You may submit an 'Engagement Question' about each lecture until midnight on the day of the lecture. **A minimum of four submissions are required during the semester.**
 ]
 
 
