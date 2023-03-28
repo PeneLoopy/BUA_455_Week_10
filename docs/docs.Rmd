@@ -182,7 +182,7 @@ class: bottom, right
   
 ### This Week
   
-- Practice Questions and Demo Videos for Quiz 2 are available.
+- **Practice Questions and Demo Videos for Quiz 2 are available.**
   
 - Thu. 3/30: Skills/Concepts Review for Quiz 2
 
@@ -430,10 +430,10 @@ grid.rect(.5,.5,width=unit(.99,"npc"), height=unit(0.99,"npc"), gp=gpar(lwd=3, f
 
 - Variable names in R dataset and definitions:
 
-   - **`household_has_smartphone`: Households with Smart Phones**  
-   - **`median_age`: Median Age**
-   - **`median_household_income`: Median Household Income**
-   - **`median_individual_income`: Median Individual Income**
+   - **`household_has_smartphone`:  Households with Smart Phones**  
+   - **`median_age`:                Median Age**
+   - **`median_household_income`:   Median Household Income**
+   - **`median_individual_income`:  Median Individual Income**
    
 #### Create Individual Plots
 
@@ -454,7 +454,7 @@ or you can try to create a function (not required today).
 
 ### In-class Exercise - 2x2 Plot Grid - Steps 3 and 4
   
-**`3.`** Create 2x2 plot of these four variables by US County as part of your class participation credit for this week.
+**`3.`** Create 2x2 plot grid of these four variables by US County as part of your class participation credit for this week.
 
 - **For full credit, plots must be in the order specified.**
 
@@ -473,9 +473,11 @@ or you can try to create a function (not required today).
 
 Reminder of two ways to export plots:
 
-- Right click on plot, then save as...
-- Use R code below but modify for your filename (height and width can also be modified)
-  - Use your completed `grid.arrange` command from your plots
+1. Right click on plot grid, then save as...
+
+2. Use R code below but modify for your filename (height and width can also be modified)
+   - Use your completed `grid.arrange` command from your plots
+   
 ```{r export code example, eval=F} 
 
 png("Wk2_Example_Plot_Grid_Penelope_Pooler.png", height=480, width=720)
@@ -494,7 +496,7 @@ dev.off()
 
 - No transformations are needed
 
-- In contrast, population data or financial data are often right-skewed and need to be ((log transformed.**
+- In contrast, population data or financial data are often right-skewed and need to be **log transformed.**
 
 - Recall from MAS 261, BUA 345 (and perhaps FIN classes):
 
@@ -570,6 +572,10 @@ hist_pop <- cnty_data3 |>
   theme_classic()
 ```
 
+<br>
+
+**The Problem:** We see we have skewed data BUT presenting log transformed data in a map makes it difficult to interpret. 
+
 ]
 
 .pull-right[
@@ -586,7 +592,7 @@ hist_pop +
 
 ---
 
-### Solution - Skewed Variable shown using Natural Log Scale
+### Solution - Skewed Variable shown using Natural Log Transfomed Axis
 
 .pull-left[
 
@@ -618,7 +624,7 @@ cnty_lpop <- cnty_data3 |>
 
 .pull-right[
 
-**Transformed Data shown on log scale (see legend)**
+**Transformed Data shown on log scale (see legend intervals)**
 
 ```{r log transformed map plot shown, echo=F, fig.dim=c(7,6)}
 
@@ -867,13 +873,13 @@ grid.rect(.5,.5,width=unit(.99,"npc"), height=unit(0.99,"npc"), gp=gpar(lwd=3, f
 
 - Questions and Material from Quiz 1 may be on Quiz 2
 
-- Practice Questions will be posted by tomorrow night (Wed. 11/2)
+- Practice Questions were posted on Monday.
 
   - Review Quiz 1 and Quiz 1 Practice Questions
   
   - Review Week HW 4 and HW 5 - Part 1 and recent lectures 
   
-- Converting text (character) date information to a date using [lubridate](https://rawgit.com/rstudio/cheatsheets/main/lubridate.pdf) commands (Week 5)
+- Converting text (character) date information to a date using **[lubridate](https://rawgit.com/rstudio/cheatsheets/main/lubridate.pdf)** commands (Week 5)
 
   - Example R commands:`ymd`, `dmy`, `mdy`, `ym` combined with `paste` to combine columns
   
@@ -887,7 +893,7 @@ grid.rect(.5,.5,width=unit(.99,"npc"), height=unit(0.99,"npc"), gp=gpar(lwd=3, f
 
 - Converting a tibble to an `xts` dataset
 
-   + Creating an interactive hchart
+   - Creating an interactive `hchart`
    
 ---
 
@@ -948,7 +954,7 @@ grid.rect(.5,.5,width=unit(.99,"npc"), height=unit(0.99,"npc"), gp=gpar(lwd=3, f
 
    - New commands (not for quiz): Capitalize 1st letter
    
-   - [Commands to covert case](https://stringr.tidyverse.org/reference/case.html)
+   - **[Commands to covert case](https://stringr.tidyverse.org/reference/case.html)**
    
    - `str_to_title`: First letter of each word
      
@@ -966,7 +972,7 @@ grid.rect(.5,.5,width=unit(.99,"npc"), height=unit(0.99,"npc"), gp=gpar(lwd=3, f
 
    - line plot or area plot
    
-   - hchart
+   - `hchart` in **highcharter** package
    
    - possibly a grouped bar chart
    

@@ -220,10 +220,10 @@ grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2)
 
 - Variable names in R dataset and definitions:
 
-   - **`household_has_smartphone`: Households with Smart Phones**  
-   - **`median_age`: Median Age**
-   - **`median_household_income`: Median Household Income**
-   - **`median_individual_income`: Median Individual Income**
+   - **`household_has_smartphone`:  Households with Smart Phones**  
+   - **`median_age`:                Median Age**
+   - **`median_household_income`:   Median Household Income**
+   - **`median_individual_income`:  Median Individual Income**
    
 #### Create Individual Plots
 
@@ -244,7 +244,7 @@ or you can try to create a function (not required today).
 
 ### In-class Exercise 1 - 2x2 Plot Grid - Steps 3 and 4
   
-**`3.`** Create 2x2 plot of these four variables by US County as part of your class participation credit for this week.
+**`3.`** Create 2x2 plot grid of these four variables by US County as part of your class participation credit for this week.
 
 - **For full credit, plots must be in the order specified.**
 
@@ -263,8 +263,10 @@ or you can try to create a function (not required today).
 
 Reminder of two ways to export plots:
 
-- Right click on plot, then save as...
-- Use this R code, but modify for your plot and filename (height and width can also be modified)
+1. Right click on plot grid, then save as...
+
+2. Use R code below but modify for your filename (height and width can also be modified)
+   - Use your completed `grid.arrange` command from your plots
 
 ```{r export code example, eval=F}
 
@@ -323,6 +325,8 @@ cnty_data3 <- cnty2019_all |>
 
 **Histogram confirms highly right-skewed data.**
 
+**The Problem:** We see we have skewed data BUT presenting log transformed data in a map makes it difficult to interpret. 
+
 ```{r untransformed pop hist code}
 (hist_pop <- cnty_data3 |>
   ggplot() +
@@ -336,7 +340,7 @@ cnty_data3 <- cnty2019_all |>
 
 ---
 
-### Solution - Skewed Variable shown using Natural Log Scale
+### Solution - Skewed Variable shown using Natural Log Transfomed Axis
 
 - Data are not transformed, but data axes and scale are
 - Options specified in `scale_fill_continuous`:
@@ -348,7 +352,7 @@ cnty_data3 <- cnty2019_all |>
 
 <br>
 
-**Transformed Data shown on log scale (see legend)**
+**Transformed Data shown on log scale (see legend intervals)**
   
 ```{r log transformed map plot code}
 
@@ -521,13 +525,13 @@ grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, ncol=2)
 
 - Questions and Material from Quiz 1 may be on Quiz 2
 
-- Practice Questions will be posted by tomorrow night (Wed. 11/2)
+- Practice Questions were posted on Monday.
 
   - Review Quiz 1 and Quiz 1 Practice Questions
   
   - Review Week HW 4 and HW 5 - Part 1 and recent lectures 
   
-- Converting text (character) date information to a date using [lubridate](https://rawgit.com/rstudio/cheatsheets/main/lubridate.pdf) commands (Week 5)
+- Converting text (character) date information to a date using **[lubridate](https://rawgit.com/rstudio/cheatsheets/main/lubridate.pdf)** commands (Week 5)
 
   - Example R commands:`ymd`, `dmy`, `mdy`, `ym` combined with `paste` to combine columns
   
@@ -541,7 +545,7 @@ grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, ncol=2)
 
 - Converting a tibble to an `xts` dataset
 
-   + Creating an interactive hchart
+   - Creating an interactive `hchart`
    
 <br>
    
@@ -616,9 +620,10 @@ grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, ncol=2)
 
    - line plot or area plot
    
-   - hchart
+   - `hchart` in **highcharter** package
    
    - possibly a grouped bar chart
+   
    
 ---
 
