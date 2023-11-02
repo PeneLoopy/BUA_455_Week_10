@@ -158,19 +158,19 @@ class: bottom, right
 
 ### Upcoming Dates
 
-- **Proposal were due on Monday, 3/27** 
+- **Final Proposals are due on Tuesday, 11/14** 
 
   - There is a 24 hours grace period for final proposals.
 
-- Project presentations begin 4 weeks from today.
+- Project presentations will take place on Tuesday 12/12.
 
-- HW 5 - Part 1 is due Friday, 3/31, at midnight (Grace period ends Monday, 4/3 at midnight).
+- HW 5 - Part 1 is due Friday, 11/3, at midnight (Grace period ends Monday, 11/6 at midnight).
 
-- HW 5 - Part 2 will be posted next weekend (after Quiz 2) and due on Wednesday 4/19
+- HW 5 - Part 2 will be posted after Quiz 2) and due on Wednesday 12/6.
 
 <br>
 
-- **Quiz 2 is on Tuesday, 4/4 - No class on Thursday, 4/6** 
+- **Quiz 2 is on Thursday, 11/9**
 
   - Mostly on Weeks 5 through 9, but material is cumulative 
 
@@ -180,11 +180,11 @@ class: bottom, right
   
 ---
   
-### This Week
+### Today and Tuesday
   
 - **Practice Questions and Demo Videos for Quiz 2 are available.**
   
-- Thu. 3/30: Skills/Concepts Review for Quiz 2
+- Tue. 11/7: Skills/Concepts Review for Quiz 2
 
   - Putting skills together for different goals
   
@@ -202,7 +202,7 @@ class: bottom, right
   
  - We will cover more about geographic data and map visualizations after Quiz 2.
  
-- **If you want help with project data, please reach out to me or TAs**.
+- **If you want help with mapping project data, please reach out to me or TAs**.
 
 ---
 
@@ -480,9 +480,8 @@ Reminder of two ways to export plots:
    
 ```{r export code example, eval=F} 
 
-png("Wk2_Example_Plot_Grid_Penelope_Pooler.png", height=480, width=720)
 grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2)
-dev.off()
+ggsave("Wk2_Example_Plot_Grid_Penelope_Pooler.png", height=4, width=6)
 
 ```
 
@@ -983,7 +982,7 @@ background-size: cover
 
 .pull-left[
 
-### **Key Points from Week 10**
+### **Key Points from Weeks 10 and 11**
 
 .bg-azure.b--dark_cyan.ba.bw2.br3.shadow-5.ph2[
 
@@ -1001,7 +1000,7 @@ background-size: cover
 
 - Quiz 2 Practice Questions are available.
 
-- Quiz 2 will be on Tue. 4/4 and there is no class on 4/6.
+- Quiz 2 will be on Thursday, 11/9.
 
 ]
 

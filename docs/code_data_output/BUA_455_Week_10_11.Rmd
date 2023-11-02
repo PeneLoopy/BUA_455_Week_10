@@ -1,57 +1,38 @@
-<!DOCTYPE html>
-<html lang="" xml:lang="">
-  <head>
-    <title>BUA 455 - Week 10</title>
-    <meta charset="utf-8" />
-    <meta name="author" content="Penelope Pooler Eisenbies" />
-    <meta name="date" content="2023-11-02" />
-    <script src="docs_files/header-attrs/header-attrs.js"></script>
-    <link href="docs_files/panelset/panelset.css" rel="stylesheet" />
-    <script src="docs_files/panelset/panelset.js"></script>
-    <link href="docs_files/tile-view/tile-view.css" rel="stylesheet" />
-    <script src="docs_files/tile-view/tile-view.js"></script>
-    <script src="docs_files/xaringanExtra_fit-screen/fit-screen.js"></script>
-    <link href="docs_files/tachyons/tachyons.min.css" rel="stylesheet" />
-    <link href="docs_files/animate.css/animate.xaringan.css" rel="stylesheet" />
-    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
-  </head>
-  <body>
-    <textarea id="source">
+---
+title: "Week 10_11"
+author: "Penelope Pooler Eisenbies"
+date: "`r Sys.Date()`"
+output: 
+  html_document: 
+    code_folding: hide
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+---
 
+```{r setup, include=TRUE}
 
+# this line specifies options for default options for all R Chunks
+knitr::opts_chunk$set(echo=T, 
+                      highlight=T)
 
+# suppress scientific notation
+options(scipen=100,
+        getSymbols.warning4.0 = FALSE)
 
+# install helper package (pacman), if needed
+if (!require("pacman")) install.packages("pacman", repos = "http://lib.stat.cmu.edu/R/CRAN/")
 
+# install and load required packages
+# pacman should be first package in parentheses and then list others
+pacman::p_load(pacman,tidyverse, ggthemes, magrittr, knitr, lubridate, gridExtra, RColorBrewer, 
+               flexdashboard, maps, usdata, countrycode, mapproj, shadowtext, grid)
 
+# verify packages (comment out in finished documents)
+p_loaded()
 
+```
 
-
-
-
-
-
-
-
-
-
-
-background-image: url("docs_files/images/sloth_faded.png")
-background-size: cover
-
-class: bottom, right
-
-## BUA 455 - Week 10
-
-### Introduction To Geographic Data and Quiz 2 Review
-
-&lt;br&gt;
-
-
-#### Penelope Pooler Eisenbies
-
-#### 2023-11-02
-
-[Wikipedia Sloth Page](https://en.wikipedia.org/wiki/Sloth)
 
 ---
 
@@ -67,7 +48,7 @@ class: bottom, right
 
 - HW 5 - Part 2 will be posted after Quiz 2) and due on Wednesday 12/6.
 
-&lt;br&gt;
+<br>
 
 - **Quiz 2 is on Thursday, 11/9**
 
@@ -89,7 +70,7 @@ class: bottom, right
   
   - Come with questions or submit them in Engagement Questions
   
-&lt;br&gt;
+<br>
   
 - Today - Intro to Managing and Plotting Geographic Data 
 
@@ -97,7 +78,7 @@ class: bottom, right
   
   - Mapping data is an effective data curation tool that may be useful in this class, other classes, your career.
   
-&lt;br&gt;
+<br>
   
  - We will cover more about geographic data and map visualizations after Quiz 2.
  
@@ -105,9 +86,7 @@ class: bottom, right
 
 ---
 
-### In-class Exercise - Week 10
-
-.pull-left[
+### In-class Exercise 1 - Week 10
 
 **Purpose:**  
 
@@ -116,14 +95,6 @@ class: bottom, right
 - To experiment with mapping data
 
 - Students are encouraged to use domestic or international map data in their dashboards if appropriate.
-
-]
-
-.pull-right[
-
-![](docs_files/images/owl.png)
-
-]
 
 ---
 
@@ -137,45 +108,46 @@ class: bottom, right
 
 - R also has world information, e.g., countries, continents, etc.
 
-
-```r
-us_states &lt;- map_data("state") |&gt;                    # state polygons (not used today)
+```{r us data prep}
+us_states <- map_data("state") |>                    # state polygons (not used today)
   rename("state" = "region")
-us_counties &lt;- map_data("county") |&gt;                 # county polygons
+
+us_counties <- map_data("county") |>                 # county polygons
   rename("state" = "region", "county" = "subregion")
 # unique(us_counties$county[us_counties$state=="louisiana"])   # note issue Louisiana counties
-cnty2019_all &lt;- county_2019
-# unique(cnty2019_all$name[cnty2019_all$state=="Louisiana"]) # note issue Louisiana counties
 
-cnty2019_all &lt;- cnty2019_all |&gt; 
+cnty2019_all <- county_2019
+# unique(cnty2019_all$county[cnty2019_all$state=="louisiana"]) # note issue Louisiana counties
+
+cnty2019_all <- cnty2019_all |> 
   mutate(state = tolower(state),
          county = tolower(name),
          county = gsub(" county", "", county),
          county = gsub(" parish", "", county),
          county = gsub("\\.", "", county))            # \\ is required because . used in R coding
 
-cnty2019_all &lt;- full_join(us_counties,cnty2019_all)  # geo data and demographic data
+cnty2019_all <- full_join(us_counties,cnty2019_all)  # geo data and demographic data
+
 ```
 
 ---
 
 ### County Demographic Plots
 
-.panelset[
-.panel[.panel-name[**Data and Plot 1**]
-
-.pull-left[
-
 - Creating a new dataset not required, but helpful
 - Plot code could be converted into a function
 
+```{r demographic example - select data and plots 1 thru 4}
 
-```r
-cnty_data1 &lt;- cnty2019_all |&gt; 
+# select data
+cnty_data1 <- cnty2019_all |> 
   select(long:county, hs_grad, bachelors, 
          household_has_computer, 
          household_has_broadband) 
-cnty_hs_grad &lt;- cnty_data1 |&gt;
+
+
+# hs grad pct plot
+(cnty_hs_grad <- cnty_data1 |>
   ggplot(aes(x=long, y=lat, 
              group=group, fill=hs_grad)) +
     geom_polygon() +
@@ -183,27 +155,11 @@ cnty_hs_grad &lt;- cnty_data1 |&gt;
     coord_map("albers", lat0 = 39, lat1 = 45) +
     labs(fill= "", 
          title="Percent with High School Degree") +
-    scale_fill_continuous(type = "viridis") 
-```
+    scale_fill_continuous(type = "viridis"))
 
 
-]
-
-.pull-right[
-
-&lt;img src="docs_files/figure-html/demographic example - plot 1 shown-1.png" width="504" /&gt;
-
-]
-
-]
-
-.panel[.panel-name[**Plot 2**]
-
-.pull-left[
-
-
-```r
-cnty_bachelors &lt;- cnty_data1 |&gt;
+# bachelors pct plot
+(cnty_bachelors <- cnty_data1 |>
   ggplot(aes(x=long, y=lat, 
              group=group, 
              fill=bachelors)) +
@@ -211,27 +167,11 @@ cnty_bachelors &lt;- cnty_data1 |&gt;
     theme_map() +
     coord_map("albers", lat0 = 39, lat1 = 45) +
     labs(fill= "", title="Percent with Bachelor's Degree") +
-    scale_fill_continuous(type = "viridis")
-```
+    scale_fill_continuous(type = "viridis"))
 
 
-]
-
-.pull-right[
-
-&lt;img src="docs_files/figure-html/demographic example - plot 2 shown-1.png" width="504" /&gt;
-
-]
-
-]
-
-.panel[.panel-name[**Plot 3**]
-
-.pull-left[
-
-
-```r
-cnty_computer &lt;- cnty_data1 |&gt;
+# hh has computer pct plot
+(cnty_computer <- cnty_data1 |>
   ggplot(aes(x=long, y=lat, 
              group=group, 
              fill=household_has_computer)) +
@@ -239,27 +179,11 @@ cnty_computer &lt;- cnty_data1 |&gt;
     theme_map() +
     coord_map("albers", lat0 = 39, lat1 = 45) +
     labs(fill= "", title="Percent of Households with A Computer")+
-    scale_fill_continuous(type = "viridis")
-```
+    scale_fill_continuous(type = "viridis"))
 
 
-]
-
-.pull-right[
-
-&lt;img src="docs_files/figure-html/demographic example - plot 3 shown-1.png" width="504" /&gt;
-
-]
-
-]
-
-.panel[.panel-name[**Plot 4**]
-
-.pull-left[
-
-
-```r
-cnty_brdbd &lt;- cnty_data1 |&gt;
+# hh has broadband pct plot
+(cnty_brdbd <- cnty_data1 |>
   ggplot(aes(x=long, y=lat, 
              group=group, 
              fill=household_has_broadband)) +
@@ -267,35 +191,26 @@ cnty_brdbd &lt;- cnty_data1 |&gt;
     theme_map() +
     coord_map("albers", lat0 = 39, lat1 = 45) +
     labs(fill= "", title="Percent of Households with BroadBand") +
-    scale_fill_continuous(type = "viridis")
+    scale_fill_continuous(type = "viridis"))
+
 ```
 
 
-]
 
-.pull-right[
-
-&lt;img src="docs_files/figure-html/demographic example - plot 4 shown-1.png" width="504" /&gt;
-
-]
-
-]
-
-]
 
 ---
 
 ### Demographic Plot Grid - Order Matters - L to R by Rows
 
-```r
-grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2)
-```
+```{r grid of all four demographic plots, fig.align='center', fig.dim=c(14,6), echo=F}
 
-&lt;img src="docs_files/figure-html/grid of all four demographic plots-1.png" width="1008" style="display: block; margin: auto;" /&gt;
+grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2) 
+
+```
 
 ---
 
-### In-class Exercise - 2x2 Plot Grid - Steps 1 and 2
+### In-class Exercise 1 - 2x2 Plot Grid - Steps 1 and 2
 
 **Steps to Follow**
 
@@ -315,18 +230,19 @@ grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2)
 You can copy provided plot code and modify it for these variables
 or you can try to create a function (not required today).
 
+```{r usmaps demographic maps exercise}
 
-```r
 # select data for plot (not required, but helpful)
-# cnty_data2 &lt;- 
+# cnty_data2 <- 
 
 # create four individual plots, one for each variable
 # use provided plot code and modify
+
 ```
    
 ---
 
-### In-class Exercise - 2x2 Plot Grid - Steps 3 and 4
+### In-class Exercise 1 - 2x2 Plot Grid - Steps 3 and 4
   
 **`3.`** Create 2x2 plot grid of these four variables by US County as part of your class participation credit for this week.
 
@@ -337,8 +253,8 @@ or you can try to create a function (not required today).
 
 #### Create Plot Grid using `grid.arrange`
 
+```{r  in-class exercise 2x2 plot grid}
 
-```r
 # for full credit grid of plots must be in order specified
 # border around all four plots not required
 ```
@@ -351,24 +267,23 @@ Reminder of two ways to export plots:
 
 2. Use R code below but modify for your filename (height and width can also be modified)
    - Use your completed `grid.arrange` command from your plots
-   
 
-```r
+```{r export code example, eval=F}
+
 grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2)
 ggsave("Wk2_Example_Plot_Grid_Penelope_Pooler.png", height=4, width=6)
+
 ```
 
 ---
 
 ### Mapping Log Transformed Data
 
-.pull-left[
-
 - The previous examples above are all percent data.
 
 - No transformations are needed
 
-- In contrast, population data or financial data are often right-skewed and need to be **log transformed.**
+- In contrast, population data or financial data are often right-skewed and need to be ((log transformed.**
 
 - Recall from MAS 261, BUA 345 (and perhaps FIN classes):
 
@@ -376,30 +291,20 @@ ggsave("Wk2_Example_Plot_Grid_Penelope_Pooler.png", height=4, width=6)
   
   -  The following demo shows how useful it is for mapping right skewed data.
 
-]
 
-.pull-right[
-
-![](docs_files/images/beaver.png)
-
-
-]
-
-
-  
 ---
 
 ### Plot of Skewed Data
 
-.pull-left[
+**If map looks like this, examine histogram of data.**
 
+```{r untransformed pop map code}
 
-```r
-cnty_data3 &lt;- cnty2019_all |&gt; 
-  select(long:county, pop) |&gt;
+cnty_data3 <- cnty2019_all |> 
+  select(long:county, pop) |>
   mutate(pop1k = pop/1000)
        
-cnty_pop &lt;- cnty_data3 |&gt;
+(cnty_pop <- cnty_data3 |>
     ggplot(aes(x=long, y=lat, group=group, fill=pop1k)) +
     geom_polygon() +
     theme_map() +
@@ -408,55 +313,33 @@ cnty_pop &lt;- cnty_data3 |&gt;
          subtitle="Unit is 1000 People") +
     scale_fill_continuous(type = "viridis") +
     theme(legend.position = "bottom",
-          legend.key.width = unit(1, "cm"))
+          legend.key.width = unit(1, "cm")))
+
 ```
 
-]
-
-.pull-right[
-
-**If map looks like this, examine histogram of data.**
-
-&lt;img src="docs_files/figure-html/untransformed pop map shown-1.png" width="504" /&gt;
-
-]
 
 ---
 
 ### Histogram Clarifies Data Skewness
 
-.pull-left[
+**Histogram confirms highly right-skewed data.**
 
+**The Problem:** We see we have skewed data BUT presenting log transformed data in a map makes it difficult to interpret. 
 
-```r
-hist_pop &lt;- cnty_data3 |&gt;
+```{r untransformed pop hist code}
+(hist_pop <- cnty_data3 |>
   ggplot() +
   geom_histogram(aes(x=pop1k),
                  fill="lightblue", 
                  col="darkblue") +
   labs(x="Population", title="Histogram of US Population Data",
        y = "Count",subtitle="Unit is 1000 People") +
-  theme_classic()
+  theme_classic())
 ```
-
-&lt;br&gt;
-
-**The Problem:** We see we have skewed data BUT presenting log transformed data in a map makes it difficult to interpret. 
-
-]
-
-.pull-right[
-
-**Histogram confirms highly right-skewed data.**
-
-&lt;img src="docs_files/figure-html/untransformed pop hist shown-1.png" width="504" /&gt;
-]
 
 ---
 
 ### Solution - Skewed Variable shown using Natural Log Transfomed Axis
-
-.pull-left[
 
 - Data are not transformed, but data axes and scale are
 - Options specified in `scale_fill_continuous`:
@@ -465,10 +348,14 @@ hist_pop &lt;- cnty_data3 |&gt;
   - `breaks = c(...)` 
   
 - break intervals determined by examining data
-  
 
-```r
-cnty_lpop &lt;- cnty_data3 |&gt;
+<br>
+
+**Transformed Data shown on log scale (see legend intervals)**
+  
+```{r log transformed map plot code}
+
+(cnty_lpop <- cnty_data3 |>
   ggplot(aes(x=long, y=lat, group=group, fill=pop1k)) +
     geom_polygon() +
     theme_map() +
@@ -478,31 +365,22 @@ cnty_lpop &lt;- cnty_data3 |&gt;
     scale_fill_continuous(type = "viridis",trans="log",
                           breaks=c(1,10,100,1000,10000)) +
     theme(legend.position = "bottom",
-          legend.key.width = unit(1, "cm"))
+          legend.key.width = unit(1, "cm")))
+
 ```
 
-]
-
-.pull-right[
-
-**Transformed Data shown on log scale (see legend intervals)**
-
-&lt;img src="docs_files/figure-html/log transformed map plot shown-1.png" width="504" /&gt;
-]
 
 ---
 
 ### Histogram of Log transformed Data
 
-.pull-left[
-
 - In a final dashboard, usually don't show histograms
 - Ideal for exploring the data.
 - Scatterplots and boxplots are also useful for data exploration.
 
+```{r log transformed pop hist code}
 
-```r
-hist_lpop &lt;- cnty_data3 |&gt;
+(hist_lpop <- cnty_data3 |>
   ggplot() +
   geom_histogram(aes(x=pop1k),fill="lightblue", col="darkblue") +
   labs(x="Population", 
@@ -510,30 +388,19 @@ hist_lpop &lt;- cnty_data3 |&gt;
        y = "Count",
        subtitle="Unit is 1000 People and Data are Log-transformed") +
   theme_classic() + 
-  scale_x_continuous(trans="log", breaks=c(1,10,100,1000,10000))
+  scale_x_continuous(trans="log", breaks=c(1,10,100,1000,10000)))
+
 ```
 
-]
-
-.pull-right[
-
-**Histogram of Log-transformed Data**
-
-&lt;img src="docs_files/figure-html/log transformed pop hist shown-1.png" width="504" /&gt;
-
-
-]
 
 ---
 
 ### Population Plot Grid
 
+```{r grid of all four population plots}
+grid.arrange(cnty_pop, hist_pop, cnty_lpop, hist_lpop, ncol=2) 
 
-```r
-grid.arrange(cnty_pop, hist_pop,cnty_lpop, hist_lpop, ncol=2) 
 ```
-
-&lt;img src="docs_files/figure-html/grid of all four population plots-1.png" width="1008" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -553,7 +420,7 @@ grid.arrange(cnty_pop, hist_pop,cnty_lpop, hist_lpop, ncol=2)
   
   - 0 values in the data will still be zeros
   
-&lt;br&gt;
+<br>
   
 - In the following example we will create plots for number of households by county:
 
@@ -565,47 +432,34 @@ grid.arrange(cnty_pop, hist_pop,cnty_lpop, hist_lpop, ncol=2)
 
 ### Number of Households Per County
 
-.pull-left[
-
 #### Untransformed Data Histogram
 
+```{r data and untransformed hh data histogram code}
 
-```r
-cnty_data4 &lt;- cnty2019_all |&gt; 
-  select(long:county, households) |&gt;
+cnty_data4 <- cnty2019_all |> 
+  select(long:county, households) |>
   mutate(households1K = households/1000)
 
-hist_hholds &lt;- cnty_data4 |&gt;
+(hist_hholds <- cnty_data4 |>
   ggplot() +
   geom_histogram(aes(x=households1K),
                  fill="lightblue", 
                  col="darkblue") +
   labs(x="Number of Households", title="Histogram of US Household Data",
        y = "Count",subtitle="Unit is 1000 Households") +
-  theme_classic()
+  theme_classic())
+
 ```
-
-]
-
-.pull-right[
-
-**Number of Households is highly right-skewed.**
-
-&lt;img src="docs_files/figure-html/untransformed hh data histogram shown-1.png" width="504" /&gt;
-
-]
 
 ---
 
 ### Number of Households Per County
 
-.pull-left[
-
 #### Log transformed Data Histogram
 
+```{r log transformed hh data histogram code}
 
-```r
-hist_lhholds &lt;- cnty_data4 |&gt;
+(hist_lhholds <- cnty_data4 |>
   ggplot() +
   geom_histogram(aes(x=households1K),
                  fill="lightblue", 
@@ -615,28 +469,18 @@ hist_lhholds &lt;- cnty_data4 |&gt;
        y = "Count",
        subtitle="Unit is 1000 Households and Data are Log-transformed") +
   theme_classic() + 
-  scale_x_continuous(trans="log", breaks=c(1,10,100,1000))
+  scale_x_continuous(trans="log", breaks=c(1,10,100,1000)))
+
 ```
 
-]
-
-.pull-right[
-
-**Log-transformed data appear normally distributed**
-
-&lt;img src="docs_files/figure-html/log transformed hh data histogram shown-1.png" width="504" /&gt;
-
-]
 
 ---
 
 ### Number of Households Per County
 
-.pull-left[
+```{r untransformed hh plot map code}
 
-
-```r
-cnty_hholds &lt;- cnty_data4 |&gt;
+(cnty_hholds <- cnty_data4 |>
   ggplot(aes(x=long, y=lat, group=group, fill=households1K)) +
   geom_polygon() +
   theme_map() +
@@ -645,38 +489,34 @@ cnty_hholds &lt;- cnty_data4 |&gt;
        subtitle="Unit is 1000 Households") +
   scale_fill_continuous(type = "viridis") +
   theme(legend.position = "bottom",
-        legend.key.width = unit(1, "cm"))
+        legend.key.width = unit(1, "cm")))
+
 ```
 
-]
 
-.pull-right[
-
-**Map of untransformed households per county data is uninformative.**
-
-&lt;img src="docs_files/figure-html/untransformed data hh map shown-1.png" width="504" /&gt;
-
-]
 
 ---
 
 **Log-transformed data map is more more informative about geographic variability.**
 
-**In-class Exercise 2: Submit R code to create log transformed households map in a text file with your name.**
+#### In-class Exercise 2: Submit R code to create log transformed households map in a text file with your name.**
 
-&lt;img src="docs_files/figure-html/log transformed hh data map-1.png" width="1008" style="display: block; margin: auto;" /&gt;
+```{r log transformed hh data map}
+
+# cnty_lhholds <- cnty_data4 |>
+
+
+```
 
 ---
 
 ### Households per County Plot Grid
 
+```{r grid of all four household plots}
 
-```r
-grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, cnty_lhholds, ncol=2)
+grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, ncol=2)
+
 ```
-
-     
-&lt;img src="docs_files/figure-html/grid of all four household plots-1.png" width="1008" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -706,9 +546,7 @@ grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, cnty_lhholds, ncol=2)
 
    - Creating an interactive `hchart`
    
----
-
-### Quiz 2 Info Continued
+<br>
    
 - You should be familiar with the `bls_tidy` function we created and how to use it to import similar datasets.
 
@@ -730,10 +568,8 @@ grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, cnty_lhholds, ncol=2)
   
     - In BUA 455 we covered `bind_rows`
     
----
+<br>
 
-### Quiz 2 Info Continued
-  
 - Cleaning messy data (Week 5 and Weeks 8-9)
 
   - Dealing with text (character variables)
@@ -765,7 +601,7 @@ grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, cnty_lhholds, ncol=2)
 
    - New commands (not for quiz): Capitalize 1st letter
    
-   - **[Commands to covert case](https://stringr.tidyverse.org/reference/case.html)**
+   - [Commands to covert case](https://stringr.tidyverse.org/reference/case.html)
    
    - `str_to_title`: First letter of each word
      
@@ -787,16 +623,10 @@ grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, cnty_lhholds, ncol=2)
    
    - possibly a grouped bar chart
    
+   
 ---
 
-background-image: url("docs_files/images/tired_panda_faded.png")
-background-size: cover
-
-.pull-left[
-
-### **Key Points from Weeks 10 and 11**
-
-.bg-azure.b--dark_cyan.ba.bw2.br3.shadow-5.ph2[
+### **Key Points from Week 10 and 11**
 
 **Introduction to Geographic Data**
 
@@ -814,168 +644,6 @@ background-size: cover
 
 - Quiz 2 will be on Thursday, 11/9.
 
-]
+<br>
 
-]
-
-.pull-right[
-
-
-.bg-azure.b--dark_cyan.ba.bw2.br3.shadow-5.ph3[
 You may submit an 'Engagement Question' about each lecture until midnight on the day of the lecture. **A minimum of four submissions are required during the semester.**
-]
-
-
-]
-  
-  
-
-
-
-
-
-
-
-
-
-
-  
-    </textarea>
-<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
-<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
-<script>var slideshow = remark.create({
-"slideNumberFormat": "%current%/%total%",
-"highlightStyle": "tomorrow-night-bright",
-"highlightLines": true,
-"ratio": "16:9",
-"countIncrementalSlides": true,
-"keep_md": true
-});
-if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
-  window.dispatchEvent(new Event('resize'));
-});
-(function(d) {
-  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
-  if (!r) return;
-  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
-  d.head.appendChild(s);
-})(document);
-
-(function(d) {
-  var el = d.getElementsByClassName("remark-slides-area");
-  if (!el) return;
-  var slide, slides = slideshow.getSlides(), els = el[0].children;
-  for (var i = 1; i < slides.length; i++) {
-    slide = slides[i];
-    if (slide.properties.continued === "true" || slide.properties.count === "false") {
-      els[i - 1].className += ' has-continuation';
-    }
-  }
-  var s = d.createElement("style");
-  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
-  d.head.appendChild(s);
-})(document);
-// delete the temporary CSS (for displaying all slides initially) when the user
-// starts to view slides
-(function() {
-  var deleted = false;
-  slideshow.on('beforeShowSlide', function(slide) {
-    if (deleted) return;
-    var sheets = document.styleSheets, node;
-    for (var i = 0; i < sheets.length; i++) {
-      node = sheets[i].ownerNode;
-      if (node.dataset["target"] !== "print-only") continue;
-      node.parentNode.removeChild(node);
-    }
-    deleted = true;
-  });
-})();
-// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
-// screen reader (see PR #262)
-(function(d) {
-  let res = {};
-  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
-    const t = tr.querySelector('td:nth-child(2)').innerText;
-    tr.querySelectorAll('td:first-child .key').forEach(key => {
-      const k = key.innerText;
-      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
-    });
-  });
-  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
-})(document);
-(function() {
-  "use strict"
-  // Replace <script> tags in slides area to make them executable
-  var scripts = document.querySelectorAll(
-    '.remark-slides-area .remark-slide-container script'
-  );
-  if (!scripts.length) return;
-  for (var i = 0; i < scripts.length; i++) {
-    var s = document.createElement('script');
-    var code = document.createTextNode(scripts[i].textContent);
-    s.appendChild(code);
-    var scriptAttrs = scripts[i].attributes;
-    for (var j = 0; j < scriptAttrs.length; j++) {
-      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
-    }
-    scripts[i].parentElement.replaceChild(s, scripts[i]);
-  }
-})();
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
-// adds .remark-code-has-line-highlighted class to <pre> parent elements
-// of code chunks containing highlighted lines with class .remark-code-line-highlighted
-(function(d) {
-  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
-  const preParents = [];
-  const findPreParent = function(line, p = 0) {
-    if (p > 1) return null; // traverse up no further than grandparent
-    const el = line.parentElement;
-    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
-  };
-
-  for (let line of hlines) {
-    let pre = findPreParent(line);
-    if (pre && !preParents.includes(pre)) preParents.push(pre);
-  }
-  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
-})(document);</script>
-
-<script>
-slideshow._releaseMath = function(el) {
-  var i, text, code, codes = el.getElementsByTagName('code');
-  for (i = 0; i < codes.length;) {
-    code = codes[i];
-    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
-      text = code.textContent;
-      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
-          /^\$\$(.|\s)+\$\$$/.test(text) ||
-          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
-        code.outerHTML = code.innerHTML;  // remove <code></code>
-        continue;
-      }
-    }
-    i++;
-  }
-};
-slideshow._releaseMath(document);
-</script>
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-(function () {
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
-  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
-    script.src  = script.src.replace(/^https?:/, '');
-  document.getElementsByTagName('head')[0].appendChild(script);
-})();
-</script>
-  </body>
-</html>
