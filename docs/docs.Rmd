@@ -1,5 +1,5 @@
 ---
-title: "BUA 455 - Week 10"
+title: "BUA 455 - Weeks 10 and 11"
 subtitle: "Introduction To Geographic Data and Quiz 2 Review" 
 author: "Penelope Pooler Eisenbies"
 date: '`r Sys.Date()`'
@@ -141,7 +141,7 @@ background-size: cover
 
 class: bottom, right
 
-## BUA 455 - Week 10
+## BUA 455 - Weeks 10 and 11
 
 ### Introduction To Geographic Data and Quiz 2 Review
 
