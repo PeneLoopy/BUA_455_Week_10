@@ -38,15 +38,14 @@ p_loaded()
 
 ### Upcoming Dates
 
-- **Final Proposals are due on Tuesday, 11/14** 
+- **HW 5 - Part 1 was due yesterday (3/27) - Grace Period ends tomorrow**
 
-  - There is a 24 hours grace period for final proposals.
+- **Final Proposals are due on Tuesday, 4/9** 
 
-- Project presentations will take place on Tuesday 12/12.
 
-- HW 5 - Part 1 is due Friday, 11/3, at midnight (Grace period ends Monday, 11/6 at midnight).
+- Project presentations will take place on Tuesday 4/25.
 
-- HW 5 - Part 2 will be posted after Quiz 2) and due on Wednesday 12/6.
+- HW 5 - Part 2 will be posted after Quiz 2
 
 <br>
 
@@ -64,7 +63,7 @@ p_loaded()
   
 - **Practice Questions and Demo Videos for Quiz 2 are available.**
   
-- Tue. 11/7: Skills/Concepts Review for Quiz 2
+- Tue. 4/2: Skills/Concepts Review for Quiz 2
 
   - Putting skills together for different goals
   
@@ -259,9 +258,7 @@ or you can try to create a function (not required today).
 # border around all four plots not required
 ```
 
-**`4.`** Export and submit plot grid
-
-Reminder of two ways to export plots:
+**`4.`** Two Options to Export and Submit plot grid
 
 1. Right click on plot grid, then save as...
 
@@ -271,7 +268,7 @@ Reminder of two ways to export plots:
 ```{r export code example, eval=F}
 
 grid.arrange(cnty_hs_grad, cnty_computer, cnty_bachelors, cnty_brdbd, ncol=2)
-ggsave("Wk2_Example_Plot_Grid_Penelope_Pooler.png", height=4, width=6)
+ggsave("Wk10_Example_Plot_Grid_Penelope_Pooler.png", height=4, width=6)
 
 ```
 
@@ -642,7 +639,7 @@ grid.arrange(hist_hholds, hist_lhholds, cnty_hholds, ncol=2)
 
 - Quiz 2 Practice Questions are available.
 
-- Quiz 2 will be on Thursday, 11/9.
+- Quiz 2 will be on Thursday, 4/4.
 
 <br>
 
